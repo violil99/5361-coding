@@ -175,6 +175,8 @@ def generate_truth_table(statement: str, propositional_variables: List[str]):
     # print the truth table to the console
     # print(truth_table)
     # you can add helper methods if you want and use them here to improve your code readabilty
+
+
     n=len(propositional_variables)
     combos= make_combos(n," ")
     combos_list = combos.split()
@@ -237,7 +239,30 @@ def statement_type(statement: str, propositional_variables: List[str]) -> str:
     """
     # write your code here
     # you can add helper methods if you want and use them here to improve your code readabilty
-    pass
+        
+    n=len(propositional_variables)
+    combos= make_combos(n," ")
+    combos_list = combos.split()
+
+    propositional_values = {}
+
+    outcomes = []
+
+    for combo in combos_list:
+        for index, prop in enumerate(propositional_variables):
+            if combo[index]=="T":
+                propositional_values[prop] = True
+            else:
+                propositional_values[prop] = False
+
+        outcomes.append(evaluate_statement(statement,propositional_values))
+
+
+    if False not in outcomes:
+        return "tautology"
+    if True not in outcomes:
+        return "contradiction"
+    return "contingency"
 
 
 def main():
@@ -246,7 +271,7 @@ def main():
     to the user, you can do so. But this is not required.
     """
     # write your code here
-    generate_truth_table("p1 and p3 or not p2", ["p1","p3","p2"])
+    print(statement_type("p1 or not p1", ["p1","p3","p2"]))
     '''print(evaluate_statement('P1 IF P2', {'P1': True, 'P2': False}))
     print(evaluate_statement('P1 IF ( P2 OR NOT P3 )', {'P1': True, 'P2': False, 'P3': True}))
     print(evaluate_statement('( NOT P1 AND ( P1 OR P2 ) ) IF P2', {'P1': False, 'P2': False}))
