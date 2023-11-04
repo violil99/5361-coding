@@ -132,6 +132,9 @@ def evaluate_statement(statement: str, propositional_variables: Dict[str, bool])
        
 
 
+
+
+
     # you can add helper methods if you want and use them here to improve your code readabilty
    
 def make_combos(n: int, combos: str)->str:
@@ -175,7 +178,36 @@ def generate_truth_table(statement: str, propositional_variables: List[str]):
     n=len(propositional_variables)
     combos= make_combos(n," ")
     combos_list = combos.split()
-    print("combos list: ",combos_list,"n:",n)
+
+    propositional_values = {}
+
+    to_print = ""
+    for prop in propositional_variables:
+        to_print+=prop+"        "
+    print("\n"+to_print)
+    print("_____________________________________\n")
+
+
+    for combo in combos_list:
+        to_print=""
+        for index, prop in enumerate(propositional_variables):
+            if combo[index]=="T":
+                propositional_values[prop] = True
+                if index == len(propositional_variables)-1:
+                    to_print += str(propositional_values[prop]) +"   =>  "
+                else:
+                    to_print += str(propositional_values[prop]) +"   |  "
+            else:
+                propositional_values[prop] = False
+                if index == len(propositional_variables)-1:
+                    to_print += str(propositional_values[prop]) +"  =>  "
+                else:
+                    to_print += str(propositional_values[prop]) +"  |  "
+
+
+        print(to_print, evaluate_statement(statement,propositional_values))
+                
+            
    
 
 
@@ -214,7 +246,7 @@ def main():
     to the user, you can do so. But this is not required.
     """
     # write your code here
-    generate_truth_table("",[1,2,3])
+    generate_truth_table("p1 and p3 or not p2", ["p1","p3","p2"])
     '''print(evaluate_statement('P1 IF P2', {'P1': True, 'P2': False}))
     print(evaluate_statement('P1 IF ( P2 OR NOT P3 )', {'P1': True, 'P2': False, 'P3': True}))
     print(evaluate_statement('( NOT P1 AND ( P1 OR P2 ) ) IF P2', {'P1': False, 'P2': False}))
