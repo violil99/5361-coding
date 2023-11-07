@@ -1,3 +1,5 @@
+# code by Lilith Richter-Stephenson 40288772
+
 from typing import Dict, List
 
 """Evaluates a valid statement list containing boolean values and logical connectives"""
@@ -167,7 +169,7 @@ def evaluate_statement(statement: str, propositional_variables: Dict[str, bool])
     # you can add helper methods if you want and use them here to improve your code readabilty
    
 """Takes a number and an empty string and returns a string of all possible truth value 
-combinations for n variables"""
+combinations for n variables. This will be returned in the form: "TT TF FT FF" """
 def make_combos(n: int, combos: str)->str:
     #does not recurse when n==0
     if (n==0):
@@ -212,25 +214,34 @@ def generate_truth_table(statement: str, propositional_variables: List[str]):
 
 
     #makes a list of all possible truth values based on the number of propositional variables
+    #example n==2, combos_list = ["TT","TF","FT","FF"]
     n=len(propositional_variables)
     combos= make_combos(n," ")
     combos_list = combos.split()
 
-    propositional_values = {}
 
+    #prints a header with the names of variables and a divider
     to_print = ""
     for prop in propositional_variables:
         to_print+=prop+"        "
     print("\n"+to_print)
     print("_____________________________________\n")
 
-    #creates a dictionary to store the 
+    #creates a dictionary to store the truth values of each combination of truth values
     propositional_values = {}
 
 
+    #This will print a line (for each combination of truth values) with the truth values 
+    # of each propositional variable and the truth values of the evaluated statement
     for combo in combos_list:
+
+        #resets this value for each line
         to_print=""
+
+        #iterates through each truth value within the given combination
         for index, prop in enumerate(propositional_variables):
+
+            #sets boolean value for each propositional variable and appends this value to to_print with formatting
             if combo[index]=="T":
                 propositional_values[prop] = True
                 if index == len(propositional_variables)-1:
@@ -244,7 +255,8 @@ def generate_truth_table(statement: str, propositional_variables: List[str]):
                 else:
                     to_print += str(propositional_values[prop]) +"  |  "
 
-
+        # prints the formatted list of propositional truth values along with the result of the statement 
+        # (evalueted with the current truth values)
         print(to_print, evaluate_statement(statement,propositional_values))
                 
             
@@ -277,15 +289,21 @@ def statement_type(statement: str, propositional_variables: List[str]) -> str:
     """
     # write your code here
     # you can add helper methods if you want and use them here to improve your code readabilty
-        
+
+    #makes a list of all possible truth values based on the number of propositional variables
+    #example n==2, combos_list = ["TT","TF","FT","FF"]    
     n=len(propositional_variables)
     combos= make_combos(n," ")
     combos_list = combos.split()
 
+    #creates a dictionary to store the truth values of each combination of truth values
     propositional_values = {}
 
+    #creates a list to hold the outcomes of the evaluated statement
     outcomes = []
 
+
+    #sets proposional variables and evaluates the expression
     for combo in combos_list:
         for index, prop in enumerate(propositional_variables):
             if combo[index]=="T":
