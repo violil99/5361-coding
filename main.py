@@ -265,13 +265,16 @@ def statement_type(statement: str, propositional_variables: List[str]) -> str:
     return "contingency"
 
 
+
+
+
 def main():
     """
     In the main method, if you wish to receive the code from user and show the results
     to the user, you can do so. But this is not required.
     """
     # write your code here
-    print(statement_type("p1 or not p1", ["p1","p3","p2"]))
+    print(evaluate_statement("p1 and not not p2",{"p1":True,"p2":True}))
     '''print(evaluate_statement('P1 IF P2', {'P1': True, 'P2': False}))
     print(evaluate_statement('P1 IF ( P2 OR NOT P3 )', {'P1': True, 'P2': False, 'P3': True}))
     print(evaluate_statement('( NOT P1 AND ( P1 OR P2 ) ) IF P2', {'P1': False, 'P2': False}))
