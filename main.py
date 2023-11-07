@@ -132,6 +132,9 @@ def evaluate_statement(statement: str, propositional_variables: Dict[str, bool])
        
 
 
+
+
+
     # you can add helper methods if you want and use them here to improve your code readabilty
    
 def make_combos(n: int, combos: str)->str:
@@ -172,10 +175,41 @@ def generate_truth_table(statement: str, propositional_variables: List[str]):
     # print the truth table to the console
     # print(truth_table)
     # you can add helper methods if you want and use them here to improve your code readabilty
+
+
     n=len(propositional_variables)
     combos= make_combos(n," ")
     combos_list = combos.split()
-    print("combos list: ",combos_list,"n:",n)
+
+    propositional_values = {}
+
+    to_print = ""
+    for prop in propositional_variables:
+        to_print+=prop+"        "
+    print("\n"+to_print)
+    print("_____________________________________\n")
+
+
+    for combo in combos_list:
+        to_print=""
+        for index, prop in enumerate(propositional_variables):
+            if combo[index]=="T":
+                propositional_values[prop] = True
+                if index == len(propositional_variables)-1:
+                    to_print += str(propositional_values[prop]) +"   =>  "
+                else:
+                    to_print += str(propositional_values[prop]) +"   |  "
+            else:
+                propositional_values[prop] = False
+                if index == len(propositional_variables)-1:
+                    to_print += str(propositional_values[prop]) +"  =>  "
+                else:
+                    to_print += str(propositional_values[prop]) +"  |  "
+
+
+        print(to_print, evaluate_statement(statement,propositional_values))
+                
+            
    
 
 
@@ -205,7 +239,33 @@ def statement_type(statement: str, propositional_variables: List[str]) -> str:
     """
     # write your code here
     # you can add helper methods if you want and use them here to improve your code readabilty
-    pass
+        
+    n=len(propositional_variables)
+    combos= make_combos(n," ")
+    combos_list = combos.split()
+
+    propositional_values = {}
+
+    outcomes = []
+
+    for combo in combos_list:
+        for index, prop in enumerate(propositional_variables):
+            if combo[index]=="T":
+                propositional_values[prop] = True
+            else:
+                propositional_values[prop] = False
+
+        outcomes.append(evaluate_statement(statement,propositional_values))
+
+
+    if False not in outcomes:
+        return "tautology"
+    if True not in outcomes:
+        return "contradiction"
+    return "contingency"
+
+
+
 
 
 def main():
@@ -214,7 +274,7 @@ def main():
     to the user, you can do so. But this is not required.
     """
     # write your code here
-    generate_truth_table("",[1,2,3])
+    print(evaluate_statement("p1 and not not p2",{"p1":True,"p2":True}))
     '''print(evaluate_statement('P1 IF P2', {'P1': True, 'P2': False}))
     print(evaluate_statement('P1 IF ( P2 OR NOT P3 )', {'P1': True, 'P2': False, 'P3': True}))
     print(evaluate_statement('( NOT P1 AND ( P1 OR P2 ) ) IF P2', {'P1': False, 'P2': False}))
