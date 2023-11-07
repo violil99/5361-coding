@@ -1,21 +1,50 @@
 from typing import Dict, List
 
+"""Evaluates a valid statement list containing boolean values and logical connectives"""
 def evaluate(statement: List):
+
+    #This will find and evaluate every set of brackets
+    #The innermost bracket content will be evaluate first
     while "(" in statement:
+
+        #finds the first closing bracket
         closing = statement.index(")")
+
+        #Finds the matching opening bracket by iterating backwards from the closing bracket
         for i in range(closing,-1,-1):
+
+            #sets opening bracket index and breaks out of the loop at the first opening bracket
             if statement[i]=="(":
                 opening = i
                 break
 
+        #resets the statement, evaluating what is inside the brackets
         statement = statement[0:opening]+evaluate(statement[opening+1:closing])+statement[closing+1:]
 
 
+    #evaluates all negations before evaluating other connectives
     while "not" in statement:
+
+        #sets n to the first "not" within the statement
         n = statement.index("not")
+
+        #In the case of multiple negations, this increments n until the last negation is found
+        while statement[n+1]=="not":
+            n+=1
+
+        #sets start of statement to the statement up until the negation
         start_of_statement = statement[0:n]
+
+        #appends the negated truth value to the start of statement
+        '''This could also be done by setting statement[n] to negation(statement[n+1]) 
+        and setting statement equal to statement[:n+1]+statement[:n+2]'''
         start_of_statement.append(negation(statement[n+1]))
+
+        #Adds the end of the statement to appended start of statement
         statement = start_of_statement+statement[n+2:]
+
+
+    """repeats the equivalent process for and, or, if, and iff in order"""
 
     while "and" in statement:
         a = statement.index("and")
@@ -41,6 +70,8 @@ def evaluate(statement: List):
         start_of_statement.append(implication(statement[iff-1],statement[iff+1]))
         statement = start_of_statement+statement[iff+2:]
 
+    #returns the evaluated statement. The first statement to be evaluated will be the statement 
+    #within the rightmost, innermost brackets
     return statement
    
 
@@ -111,8 +142,10 @@ def evaluate_statement(statement: str, propositional_variables: Dict[str, bool])
     """
     # write your code here
 
+    #Turns the space separated statement into a list
     expression_list = statement.split()
    
+    #Sets propositional variables to their truth values and sets all logical connectives to lower case
     for i,s in enumerate(expression_list):
         s.strip()
         if s in propositional_variables:
@@ -121,25 +154,26 @@ def evaluate_statement(statement: str, propositional_variables: Dict[str, bool])
             expression_list[i] = s.lower()
 
 
+    #evaluates the expression list 
     new_exp=evaluate(expression_list)
-    return new_exp[0]
+
+    #given valid input, this conditional branch will always be taken
+    if len(new_exp)==1:
+        return new_exp[0]
+    else:
+        print("uh oh, looks like your expression was not solvable")
    
-    ##DEAL WITH NOTS BEFORE PROPOSITIONS. MAYBE JUST MAKE THIS PART OF YOUR TREE
-
-    ##SEPARATE OUT EXPRESSIONS BASED ON BRACKETS (TREE OR STACK)
-
-    ##EVALUATE BRACKETS IN CORRECT ORDER NOT, AND, OR, IF, IFF
-       
-
-
-
-
 
     # you can add helper methods if you want and use them here to improve your code readabilty
    
+"""Takes a number and an empty string and returns a string of all possible truth value 
+combinations for n variables"""
 def make_combos(n: int, combos: str)->str:
+    #does not recurse when n==0
     if (n==0):
         return combos
+    
+    #otherwise calls itself twice, decrementing n and adding "T" to one branch and "F" to the other
     else:
         return make_combos(n-1,combos+"T")+make_combos(n-1,combos+"F")
        
@@ -177,6 +211,7 @@ def generate_truth_table(statement: str, propositional_variables: List[str]):
     # you can add helper methods if you want and use them here to improve your code readabilty
 
 
+    #makes a list of all possible truth values based on the number of propositional variables
     n=len(propositional_variables)
     combos= make_combos(n," ")
     combos_list = combos.split()
@@ -188,6 +223,9 @@ def generate_truth_table(statement: str, propositional_variables: List[str]):
         to_print+=prop+"        "
     print("\n"+to_print)
     print("_____________________________________\n")
+
+    #creates a dictionary to store the 
+    propositional_values = {}
 
 
     for combo in combos_list:
@@ -273,15 +311,19 @@ def main():
     In the main method, if you wish to receive the code from user and show the results
     to the user, you can do so. But this is not required.
     """
+
+
     # write your code here
-    print(evaluate_statement("p1 and not not p2",{"p1":True,"p2":True}))
-    '''print(evaluate_statement('P1 IF P2', {'P1': True, 'P2': False}))
+    #print(evaluate_statement("p1 and not not p2",{"p1":True,"p2":True}))
+    #generate_truth_table("p1 and not not not not not p2",["p1","p2"])
+    print(evaluate_statement('P1 IFF P2', {'P1': True, 'P2': False}))
     print(evaluate_statement('P1 IF ( P2 OR NOT P3 )', {'P1': True, 'P2': False, 'P3': True}))
     print(evaluate_statement('( NOT P1 AND ( P1 OR P2 ) ) IF P2', {'P1': False, 'P2': False}))
     print(evaluate_statement('( NOT P1 AND ( P1 OR P2 ) ) IF P2', {'P1': False, 'P2': True}))
     print(evaluate_statement('( NOT P1 AND ( P1 OR P2 ) ) IF P2', {'P1': True, 'P2': False}))
     print(evaluate_statement('( NOT P1 AND ( P1 OR P2 ) ) IF P2', {'P1': True, 'P2': True}))
-    print(evaluate_statement('P2 AND ( P1 IF NOT P2 ) AND ( NOT P1 IF NOT P2 )', {'P1': True, 'P2': True}))
+    print(evaluate_statement('P2 AND ( ( P1 AND P1 ) IF NOT ( P2 ) ) AND ( NOT P1 IF NOT P2 )', {'P1': True, 'P2': True}))
+
     print(evaluate_statement('P2 AND ( P1 IF NOT P2 ) AND ( NOT P1 IF NOT P2 )', {'P1': True, 'P2': False}))
     print(evaluate_statement('P2 AND ( P1 IF NOT P2 ) AND ( NOT P1 IF NOT P2 )', {'P1': False, 'P2': True}))
     print(evaluate_statement('P2 AND ( P1 IF NOT P2 ) AND ( NOT P1 IF NOT P2 )', {'P1': False, 'P2': False}))
@@ -292,7 +334,7 @@ def main():
     print(evaluate_statement('( P1 IF ( P2 IF P3 ) ) IF ( ( P1 IF P2 ) IF P3 )', {'P1': True, 'P2': False, 'P3': True}))
     print(evaluate_statement('( P1 IF ( P2 IF P3 ) ) IF ( ( P1 IF P2 ) IF P3 )', {'P1': False, 'P2': False, 'P3': True}))
     print(evaluate_statement('( P1 IF ( P2 IF P3 ) ) IF ( ( P1 IF P2 ) IF P3 )', {'P1': False, 'P2': True, 'P3': True}))
-    print(evaluate_statement('( P1 IF ( P2 IF P3 ) ) IF ( ( P1 IF P2 ) IF P3 )', {'P1': False, 'P2': False, 'P3': False}))'''
+    print(evaluate_statement('( P1 IF ( P2 IF P3 ) ) IF ( ( P1 IF P2 ) IF P3 )', {'P1': False, 'P2': False, 'P3': False}))
 
 if __name__ == "__main__":
     print(main())
